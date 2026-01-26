@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview - Fitness Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            Fitness<span class="logo-accent">Guard</span>
+        </div>
+        
+        <nav>
+            <div class="nav-section">
+                <p class="nav-section-title">General</p>
+                <a href="overview.html" class="nav-item active">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="workouts.html" class="nav-item">
+                    <i class="fas fa-dumbbell nav-icon"></i>
+                    <span>Workouts</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <i class="fas fa-history nav-icon"></i>
+                    <span>History</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Reports</p>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="goals.html" class="nav-item">
+                    <i class="fas fa-bullseye nav-icon"></i>
+                    <span>Goals</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Settings</p>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="upgrade-card">
+                <h4>Additional features to enhance your fitness.</h4>
+                <p>Track more metrics and get insights</p>
+                <button class="btn-upgrade" onclick="openUpgradeModal()">Upgrade →</button>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Welcome! <span id="userName"></span></h3>
+                    <p>Fitness is a process, not a product.</p>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search Here">
+            </div>
+            
+            <div class="navbar-right">
+                <button class="icon-btn" id="messageBtn">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+                <button class="icon-btn" id="notificationBtn" style="position: relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount">3</span>
+                </button>
+                
+                <!-- Notification Panel -->
+                <div class="notification-panel" id="notificationPanel">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <span class="mark-all-read" onclick="markAllRead()">Mark all as read</span>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-item unread">
+                            <div class="notification-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Workout Completed!</div>
+                                <div class="notification-message">You burned 450 calories in your last session</div>
+                                <div class="notification-time">5 minutes ago</div>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon info">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Goal Achieved!</div>
+                                <div class="notification-message">You've reached your weekly calorie goal</div>
+                                <div class="notification-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon warning">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Streak Alert!</div>
+                                <div class="notification-message">You're on a 7-day workout streak. Keep it up!</div>
+                                <div class="notification-time">1 day ago</div>
+                            </div>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-icon info">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Weekly Report</div>
+                                <div class="notification-message">Your fitness report is ready to view</div>
+                                <div class="notification-time">2 days ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Message Panel -->
+                <div class="message-panel" id="messagePanel">
+                    <div class="notification-header">
+                        <h3>Messages</h3>
+                    </div>
+                    <div class="notification-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p>No messages yet</p>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Top Grid -->
+            <div class="dashboard-grid">
+                <!-- Current Stats -->
+                <div class="stats-section">
+                    <div class="section-header">
+                        <h2>Current Stats</h2>
+                        <button class="dropdown-btn">Daily ▼</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-menu">⋮</span>
+                            <div class="stat-icon pink">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="stat-value" id="totalCaloriesCard">0</div>
+                            <div class="stat-label">Total Calories</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-menu">⋮</span>
+                            <div class="stat-icon purple">
+                                <i class="fas fa-running"></i>
+                            </div>
+                            <div class="stat-value" id="totalWorkoutsCard">0</div>
+                            <div class="stat-label">Total Workouts</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-menu">⋮</span>
+                            <div class="stat-icon red">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="stat-value" id="avgCaloriesCard">0</div>
+                            <div class="stat-label">Avg Calories</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-menu">⋮</span>
+                            <div class="stat-icon blue">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-value" id="totalDurationCard">0</div>
+                            <div class="stat-label">Total Duration</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-menu">⋮</span>
+                            <div class="stat-icon cyan">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="stat-value" id="avgHeartRateCard">0</div>
+                            <div class="stat-label">Avg Heart Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fitness Score -->
+                <div class="risk-score-card">
+                    <div class="section-header">
+                        <h2>Fitness Score</h2>
+                        <span class="stat-menu">⋮</span>
+                    </div>
+                    <div class="risk-score-chart">
+                        <canvas id="scoreChart"></canvas>
+                        <div class="score-value">
+                            <div class="score-number" id="fitnessScore">0</div>
+                            <div class="score-badge">Low</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2>Calories Summary</h2>
+                    <button class="dropdown-btn">Yearly ▼</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="caloriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upgrade Modal -->
+    <div class="modal-overlay" id="upgradeModal">
+        <div class="upgrade-modal">
+            <button class="modal-close" onclick="closeUpgradeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="modal-header">
+                <h2>Upgrade to Premium</h2>
+                <p>Unlock advanced features and take your fitness to the next level</p>
+            </div>
+            
+            <div class="pricing-plans">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="plan-name">Free</div>
+                    <div class="plan-price">$0<span>/mo</span></div>
+                    <div class="plan-period">Forever free</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> Basic calorie tracking</li>
+                        <li><i class="fas fa-check-circle"></i> 10 workouts history</li>
+                        <li><i class="fas fa-check-circle"></i> Basic analytics</li>
+                        <li class="disabled"><i class="fas fa-times-circle"></i> Advanced charts</li>
+                        <li class="disabled"><i class="fas fa-times-circle"></i> Goal tracking</li>
+                        <li class="disabled"><i class="fas fa-times-circle"></i> Export data</li>
+                        <li class="disabled"><i class="fas fa-times-circle"></i> Priority support</li>
+                    </ul>
+                    <button class="btn-plan secondary">Current Plan</button>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="pricing-card popular">
+                    <span class="popular-badge">Most Popular</span>
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-price">$9<span>/mo</span></div>
+                    <div class="plan-period">Billed monthly</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> Everything in Free</li>
+                        <li><i class="fas fa-check-circle"></i> Unlimited workout history</li>
+                        <li><i class="fas fa-check-circle"></i> Advanced analytics</li>
+                        <li><i class="fas fa-check-circle"></i> Custom goals</li>
+                        <li><i class="fas fa-check-circle"></i> Export to CSV/PDF</li>
+                        <li><i class="fas fa-check-circle"></i> Email support</li>
+                        <li class="disabled"><i class="fas fa-times-circle"></i> AI recommendations</li>
+                    </ul>
+                    <button class="btn-plan primary" onclick="selectPlan('pro')">Upgrade to Pro</button>
+                </div>
+                
+                <!-- Premium Plan -->
+                <div class="pricing-card">
+                    <div class="plan-name">Premium</div>
+                    <div class="plan-price">$19<span>/mo</span></div>
+                    <div class="plan-period">Billed monthly</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check-circle"></i> Everything in Pro</li>
+                        <li><i class="fas fa-check-circle"></i> AI-powered recommendations</li>
+                        <li><i class="fas fa-check-circle"></i> Personalized meal plans</li>
+                        <li><i class="fas fa-check-circle"></i> Video workout library</li>
+                        <li><i class="fas fa-check-circle"></i> 1-on-1 coaching</li>
+                        <li><i class="fas fa-check-circle"></i> Priority support</li>
+                        <li><i class="fas fa-check-circle"></i> Early access to features</li>
+                    </ul>
+                    <button class="btn-plan primary" onclick="selectPlan('premium')">Upgrade to Premium</button>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <p>All plans include a 14-day money-back guarantee. Cancel anytime.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="overview.js"></script>
+</body>
+</html>

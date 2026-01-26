@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Fitness Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            Fitness<span class="logo-accent">Guard</span>
+        </div>
+        
+        <nav>
+            <div class="nav-section">
+                <p class="nav-section-title">General</p>
+                <a href="overview.html" class="nav-item">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="workouts.html" class="nav-item">
+                    <i class="fas fa-dumbbell nav-icon"></i>
+                    <span>Workouts</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <i class="fas fa-history nav-icon"></i>
+                    <span>History</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Reports</p>
+                <a href="analytics.html" class="nav-item active">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="goals.html" class="nav-item">
+                    <i class="fas fa-bullseye nav-icon"></i>
+                    <span>Goals</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Settings</p>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="upgrade-card">
+                <h4>Additional features to enhance your fitness.</h4>
+                <p>Track more metrics and get insights</p>
+                <button class="btn-upgrade">Upgrade →</button>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Welcome! <span id="userName"></span></h3>
+                    <p>Fitness is a process, not a product.</p>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search Here">
+            </div>
+            
+            <div class="navbar-right">
+                <button class="icon-btn">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+                <button class="icon-btn">
+                    <i class="fas fa-bell"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2>Performance Analytics</h2>
+                    <button class="dropdown-btn">Monthly ▼</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid" style="margin-top: 2rem;">
+                <div class="stats-section">
+                    <div class="section-header">
+                        <h2>Workout Breakdown</h2>
+                    </div>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="breakdownChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stats-section">
+                    <div class="section-header">
+                        <h2>Progress Insights</h2>
+                    </div>
+                    <div style="padding: 1rem 0;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: #9ca3af; font-size: 0.875rem;">Weekly Goal</span>
+                                <span style="color: #fff; font-weight: 600;">75%</span>
+                            </div>
+                            <div style="height: 8px; background: #0f1419; border-radius: 4px; overflow: hidden;">
+                                <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #a855f7, #7c3aed);"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: #9ca3af; font-size: 0.875rem;">Monthly Goal</span>
+                                <span style="color: #fff; font-weight: 600;">60%</span>
+                            </div>
+                            <div style="height: 8px; background: #0f1419; border-radius: 4px; overflow: hidden;">
+                                <div style="width: 60%; height: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb);"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: #9ca3af; font-size: 0.875rem;">Yearly Goal</span>
+                                <span style="color: #fff; font-weight: 600;">45%</span>
+                            </div>
+                            <div style="height: 8px; background: #0f1419; border-radius: 4px; overflow: hidden;">
+                                <div style="width: 45%; height: 100%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="analytics.js"></script>
+</body>
+</html>

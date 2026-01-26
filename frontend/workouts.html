@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts - Fitness Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            Fitness<span class="logo-accent">Guard</span>
+        </div>
+        
+        <nav>
+            <div class="nav-section">
+                <p class="nav-section-title">General</p>
+                <a href="overview.html" class="nav-item">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="workouts.html" class="nav-item active">
+                    <i class="fas fa-dumbbell nav-icon"></i>
+                    <span>Workouts</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <i class="fas fa-history nav-icon"></i>
+                    <span>History</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Reports</p>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="goals.html" class="nav-item">
+                    <i class="fas fa-bullseye nav-icon"></i>
+                    <span>Goals</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Settings</p>
+                <a href="settings.html" class="nav-item">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="upgrade-card">
+                <h4>Additional features to enhance your fitness.</h4>
+                <p>Track more metrics and get insights</p>
+                <button class="btn-upgrade">Upgrade →</button>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Welcome! <span id="userName"></span></h3>
+                    <p>Fitness is a process, not a product.</p>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search Here">
+            </div>
+            
+            <div class="navbar-right">
+                <button class="icon-btn" id="messageBtn">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+                <button class="icon-btn" id="notificationBtn" style="position: relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount">3</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="stats-section" style="margin-bottom: 2rem;">
+                <div class="section-header">
+                    <h2>Calculate Calories Burned</h2>
+                </div>
+                <form id="predictionForm" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Gender</label>
+                        <select id="gender" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            <option value="">Select</option>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Age</label>
+                        <input type="number" id="age" placeholder="25" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Height (cm)</label>
+                        <input type="number" id="height" placeholder="170" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Weight (kg)</label>
+                        <input type="number" id="weight" placeholder="70" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Duration (min)</label>
+                        <input type="number" id="duration" placeholder="30" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Heart Rate (bpm)</label>
+                        <input type="number" id="heartRate" placeholder="120" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <label style="color: #6b7280; font-size: 0.875rem; margin-bottom: 0.5rem;">Body Temp (°C)</label>
+                        <input type="number" id="bodyTemp" placeholder="37.5" step="0.1" required style="padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <button type="submit" style="padding: 0.75rem; background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
+                        Calculate →
+                    </button>
+                </form>
+                <div id="result" class="hidden" style="margin-top: 2rem; padding: 2rem; background: #0f1419; border-radius: 16px; text-align: center;">
+                    <h3 style="margin-bottom: 1rem;">Predicted Calories</h3>
+                    <div style="font-size: 3rem; font-weight: 700; color: #a855f7;" id="caloriesValue">0</div>
+                    <button id="saveBtn" style="margin-top: 1rem; padding: 0.75rem 2rem; background: #10b981; border: none; border-radius: 8px; color: #fff; cursor: pointer;">Save to History</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="workouts.js"></script>
+</body>
+</html>

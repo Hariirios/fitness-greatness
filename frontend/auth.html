@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Analytics - Login</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <!-- Left Side - Branding with Beach Image -->
+            <div class="auth-branding">
+                <div class="branding-content">
+                    <div class="brand-header">
+                        <span class="brand-logo">△</span>
+                        <span>FITNESS</span>
+                    </div>
+                    
+                    <div class="brand-main">
+                        <h1 class="brand-title">Don't have an<br>account?</h1>
+                        <p class="brand-subtitle">Register to access all the features of our service. Manage your fitness in one place. It's free!</p>
+                    </div>
+                    
+                    <div class="social-links">
+                        <div class="social-icon">📘</div>
+                        <div class="social-icon">�</div>
+                        <div class="social-icon">📷</div>
+                        <div class="social-icon">💼</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Forms -->
+            <div class="auth-forms">
+                <div class="forms-container">
+                    <!-- Signup Form -->
+                    <form id="signupForm" class="auth-form active">
+                        <div class="form-header">
+                            <h2>Sign up</h2>
+                        </div>
+
+                        <div id="signupErrorMessage" class="error-message hidden"></div>
+
+                        <div class="form-group">
+                            <label for="signupEmail">Email</label>
+                            <input type="email" id="signupEmail" placeholder="alexgorbachov@yandex.ru" required autocomplete="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupUsername">Login</label>
+                            <input type="text" id="signupUsername" placeholder="Choose username" required autocomplete="username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="signupPassword" placeholder="••••••••••••" required autocomplete="new-password">
+                                <button type="button" class="toggle-password" onclick="togglePassword('signupPassword')">
+                                    <span class="eye-icon">👁</span>
+                                </button>
+                            </div>
+                            <div class="password-strength" id="passwordStrength"></div>
+                        </div>
+
+                        <div class="terms-checkbox">
+                            <input type="checkbox" id="termsAccept" required>
+                            <label for="termsAccept">
+                                I agree to the all statements in <a href="#" class="link-primary">Terms of service</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <span>Sign up</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+
+                        <p class="switch-form">
+                            Have an account?
+                            <a href="#" id="showLogin" class="link-primary">Sign in</a>
+                        </p>
+                    </form>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-header">
+                            <h2>Sign in</h2>
+                        </div>
+
+                        <div id="errorMessage" class="error-message hidden"></div>
+
+                        <div class="form-group">
+                            <label for="loginUsername">Login</label>
+                            <input type="text" id="loginUsername" placeholder="Enter your username" required autocomplete="username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="loginPassword" placeholder="••••••••••••" required autocomplete="current-password">
+                                <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">
+                                    <span class="eye-icon">👁</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <span>Sign in</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+
+                        <p class="switch-form">
+                            Don't have an account?
+                            <a href="#" id="showSignup" class="link-primary">Create one</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

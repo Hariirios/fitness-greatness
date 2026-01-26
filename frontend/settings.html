@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Fitness Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            Fitness<span class="logo-accent">Guard</span>
+        </div>
+        
+        <nav>
+            <div class="nav-section">
+                <p class="nav-section-title">General</p>
+                <a href="overview.html" class="nav-item">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="workouts.html" class="nav-item">
+                    <i class="fas fa-dumbbell nav-icon"></i>
+                    <span>Workouts</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <i class="fas fa-history nav-icon"></i>
+                    <span>History</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Reports</p>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="goals.html" class="nav-item">
+                    <i class="fas fa-bullseye nav-icon"></i>
+                    <span>Goals</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <p class="nav-section-title">Settings</p>
+                <a href="settings.html" class="nav-item active">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="upgrade-card">
+                <h4>Additional features to enhance your fitness.</h4>
+                <p>Track more metrics and get insights</p>
+                <button class="btn-upgrade">Upgrade →</button>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt nav-icon"></i>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="user-avatar" id="navbarAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Welcome! <span id="userName"></span></h3>
+                    <p>Fitness is a process, not a product.</p>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search Here">
+            </div>
+            
+            <div class="navbar-right">
+                <button class="icon-btn" id="messageBtn">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+                <button class="icon-btn" id="notificationBtn" style="position: relative;">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount">3</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="stats-section">
+                <div class="section-header">
+                    <h2>Profile Settings</h2>
+                </div>
+                
+                <!-- Profile Picture Section -->
+                <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; padding: 2rem; background: #0f1419; border-radius: 12px;">
+                    <div style="position: relative;">
+                        <div id="profileAvatar" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #fff; overflow: hidden;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <label for="profilePicture" style="position: absolute; bottom: 0; right: 0; width: 40px; height: 40px; background: #a855f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid #1a1f2e;">
+                            <i class="fas fa-camera" style="color: #fff; font-size: 1rem;"></i>
+                        </label>
+                        <input type="file" id="profilePicture" accept="image/*" style="display: none;">
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 0.5rem;">Profile Picture</h3>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">Upload a profile picture (JPG, PNG, max 5MB)</p>
+                        <button id="removePhoto" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">
+                            <i class="fas fa-trash"></i> Remove Photo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Account Settings -->
+                <div style="display: grid; gap: 1.5rem;">
+                    <div>
+                        <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Username</label>
+                        <input type="text" id="settingsUsername" style="width: 100%; padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Email</label>
+                        <input type="email" id="settingsEmail" style="width: 100%; padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Notifications</label>
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #0f1419; border-radius: 8px;">
+                            <input type="checkbox" id="emailNotif" checked style="width: 20px; height: 20px; cursor: pointer;">
+                            <label for="emailNotif" style="color: #fff; cursor: pointer; margin: 0;">Email notifications</label>
+                        </div>
+                    </div>
+                    <button id="saveSettings" style="padding: 0.875rem; background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="settings.js"></script>
+</body>
+</html>
