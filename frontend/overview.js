@@ -11,76 +11,88 @@ if (!token) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     currentUser = JSON.parse(localStorage.getItem('user'));
-    document.getElementById('userName').textContent = currentUser.username;
+    
+    // Update user info
+    if (document.getElementById('userName')) {
+        document.getElementById('userName').textContent = currentUser.username;
+    }
     
     // Load profile picture
     const profilePic = localStorage.getItem('profilePicture');
-    if (profilePic) {
-        document.querySelector('.user-avatar').innerHTML = `<img src="${profilePic}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    if (profilePic && document.getElementById('userAvatarImg')) {
+        document.getElementById('userAvatarImg').src = profilePic;
     }
     
-    initCharts();
     await loadWorkouts();
     updateStats();
-    initNotifications();
+    
+    // Wait for DOM to be ready then init charts
+    setTimeout(() => {
+        initCharts();
+    }, 100);
+    
+    // Add event listeners
+    initEventListeners();
 });
 
-// Notification System
-function initNotifications() {
-    const notificationBtn = document.getElementById('notificationBtn');
-    const messageBtn = document.getElementById('messageBtn');
-    const notificationPanel = document.getElementById('notificationPanel');
-    const messagePanel = document.getElementById('messagePanel');
-    
-    // Toggle notification panel
-    notificationBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        notificationPanel.classList.toggle('active');
-        messagePanel.classList.remove('active');
-    });
-    
-    // Toggle message panel
-    messageBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        messagePanel.classList.toggle('active');
-        notificationPanel.classList.remove('active');
-    });
-    
-    // Close panels when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!notificationPanel.contains(e.target) && !notificationBtn.contains(e.target)) {
-            notificationPanel.classList.remove('active');
-        }
-        if (!messagePanel.contains(e.target) && !messageBtn.contains(e.target)) {
-            messagePanel.classList.remove('active');
-        }
-    });
-    
-    // Mark notification as read when clicked
-    document.querySelectorAll('.notification-item').forEach(item => {
-        item.addEventListener('click', function() {
-            this.classList.remove('unread');
-            updateNotificationCount();
+function initEventListeners() {
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            updateMainChart(this.textContent.toLowerCase());
         });
     });
-}
-
-function markAllRead() {
-    document.querySelectorAll('.notification-item').forEach(item => {
-        item.classList.remove('unread');
-    });
-    updateNotificationCount();
-}
-
-function updateNotificationCount() {
-    const unreadCount = document.querySelectorAll('.notification-item.unread').length;
-    const badge = document.getElementById('notificationCount');
     
-    if (unreadCount > 0) {
-        badge.textContent = unreadCount;
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
+    // Notification button
+    const notificationBtn = document.querySelector('.notification-btn');
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', () => {
+            alert('Notifications: You have 3 new workout achievements!');
+        });
+    }
+    
+    // User profile dropdown
+    const userProfile = document.querySelector('.user-profile');
+    if (userProfile) {
+        userProfile.addEventListener('click', () => {
+            const dropdown = document.createElement('div');
+            dropdown.style.cssText = `
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                padding: 10px;
+                margin-top: 10px;
+                z-index: 1000;
+            `;
+            dropdown.innerHTML = `
+                <div style="padding: 10px; cursor: pointer; border-radius: 8px; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'" onclick="window.location.href='settings.html'">Settings</div>
+                <div style="padding: 10px; cursor: pointer; border-radius: 8px; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'" onclick="logout()">Logout</div>
+            `;
+            
+            // Remove existing dropdown
+            const existing = document.querySelector('.user-dropdown');
+            if (existing) existing.remove();
+            
+            dropdown.className = 'user-dropdown';
+            userProfile.style.position = 'relative';
+            userProfile.appendChild(dropdown);
+            
+            // Close dropdown when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!userProfile.contains(e.target)) {
+                        dropdown.remove();
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 100);
+        });
     }
 }
 
@@ -99,143 +111,264 @@ async function loadWorkouts() {
         workoutHistory = data.workouts || [];
     } catch (error) {
         console.error('Failed to load workouts');
+        // Use demo data if API fails
+        workoutHistory = generateDemoData();
     }
+}
+
+function generateDemoData() {
+    const demoData = [];
+    for (let i = 0; i < 20; i++) {
+        demoData.push({
+            calories: 200 + Math.random() * 400,
+            duration: 20 + Math.random() * 60,
+            heart_rate: 100 + Math.random() * 80,
+            created_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString()
+        });
+    }
+    return demoData;
 }
 
 function updateStats() {
     const totalCalories = workoutHistory.reduce((sum, w) => sum + w.calories, 0);
     const totalWorkouts = workoutHistory.length;
     const avgCalories = totalWorkouts > 0 ? totalCalories / totalWorkouts : 0;
-    const totalDuration = workoutHistory.reduce((sum, w) => sum + w.duration, 0);
-    const avgHeartRate = totalWorkouts > 0 
-        ? workoutHistory.reduce((sum, w) => sum + w.heart_rate, 0) / totalWorkouts 
-        : 0;
     
-    document.getElementById('totalCaloriesCard').textContent = Math.round(totalCalories);
-    document.getElementById('totalWorkoutsCard').textContent = totalWorkouts;
-    document.getElementById('avgCaloriesCard').textContent = Math.round(avgCalories);
-    document.getElementById('totalDurationCard').textContent = `${Math.round(totalDuration)}m`;
-    document.getElementById('avgHeartRateCard').textContent = Math.round(avgHeartRate);
+    // Update main stats with animation
+    animateValue('totalWorkouts', 0, totalWorkouts, 1000);
+    animateValue('avgCalories', 0, Math.round(avgCalories), 1000);
+}
+
+function animateValue(id, start, end, duration) {
+    const element = document.getElementById(id);
+    if (!element) return;
     
-    const fitnessScore = Math.min(1000, Math.round(totalCalories / 10 + totalWorkouts * 50));
-    document.getElementById('fitnessScore').textContent = fitnessScore;
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
     
-    if (charts.score) {
-        charts.score.data.datasets[0].data = [fitnessScore, 1000 - fitnessScore];
-        charts.score.update('none');
-    }
-    
-    const badge = document.querySelector('.score-badge');
-    if (badge) {
-        if (fitnessScore >= 700) {
-            badge.textContent = 'High';
-            badge.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-        } else if (fitnessScore >= 400) {
-            badge.textContent = 'Medium';
-            badge.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
-        } else {
-            badge.textContent = 'Low';
-            badge.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= end) {
+            current = end;
+            clearInterval(timer);
         }
-    }
-    
-    updateCharts();
+        element.textContent = Math.floor(current);
+    }, 16);
 }
 
 function initCharts() {
-    const scoreCtx = document.getElementById('scoreChart');
-    if (scoreCtx) {
-        charts.score = new Chart(scoreCtx, {
-            type: 'doughnut',
+    // Main Chart (Bar Chart)
+    const mainCtx = document.getElementById('mainChart');
+    if (mainCtx) {
+        const ctx = mainCtx.getContext('2d');
+        charts.main = new Chart(ctx, {
+            type: 'bar',
             data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 datasets: [{
-                    data: [0, 1000],
-                    backgroundColor: ['#f97316', '#1a1f2e'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                cutout: '75%',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                }
-            }
-        });
-    }
-    
-    const caloriesCtx = document.getElementById('caloriesChart');
-    if (caloriesCtx) {
-        charts.calories = new Chart(caloriesCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Calories',
-                    data: [],
-                    borderColor: '#a855f7',
-                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 2
+                    data: generateMonthlyData(),
+                    backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                    borderRadius: 8,
+                    borderSkipped: false,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1
+                    }
+                },
                 scales: {
                     y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#6b7280' }
+                        display: false,
+                        grid: { display: false }
                     },
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#6b7280' }
+                        ticks: { 
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                elements: {
+                    bar: {
+                        borderRadius: 8
                     }
                 }
             }
         });
     }
+    
+    // Platforms Chart (Doughnut)
+    const platformsCtx = document.getElementById('platformsChart');
+    if (platformsCtx) {
+        const ctx = platformsCtx.getContext('2d');
+        charts.platforms = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Cardio', 'Strength', 'Flexibility'],
+                datasets: [{
+                    data: [68, 43, 12],
+                    backgroundColor: ['#4285f4', '#2d8cff', '#6264a7'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    }
+    
+    // Sentiments Chart (Doughnut)
+    const sentimentsCtx = document.getElementById('sentimentsChart');
+    if (sentimentsCtx) {
+        const ctx = sentimentsCtx.getContext('2d');
+        charts.sentiments = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Positive', 'Negative', 'Neutral'],
+                datasets: [{
+                    data: [74, 5, 21],
+                    backgroundColor: ['#22c55e', '#ef4444', '#6b7280'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    }
+    
+    console.log('Charts initialized:', Object.keys(charts));
 }
 
-function updateCharts() {
-    if (workoutHistory.length === 0 || !charts.calories) return;
+function updateMainChart(type) {
+    if (!charts.main) return;
     
-    const last10 = workoutHistory.slice(0, 10).reverse();
-    const labels = last10.map(w => new Date(w.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    let newData;
+    switch(type) {
+        case 'workouts':
+            newData = generateMonthlyData();
+            break;
+        case 'duration':
+            newData = generateMonthlyData().map(val => val * 1.5);
+            break;
+        case 'calories':
+            newData = generateMonthlyData().map(val => val * 10);
+            break;
+        default:
+            newData = generateMonthlyData();
+    }
     
-    charts.calories.data.labels = labels;
-    charts.calories.data.datasets[0].data = last10.map(w => w.calories);
-    charts.calories.update();
+    charts.main.data.datasets[0].data = newData;
+    charts.main.update('active');
+}
+
+function generateMonthlyData() {
+    // Generate realistic workout data for each month based on actual data
+    if (workoutHistory.length > 0) {
+        const monthlyData = new Array(12).fill(0);
+        workoutHistory.forEach(workout => {
+            const month = new Date(workout.created_at).getMonth();
+            monthlyData[month] += 1;
+        });
+        return monthlyData;
+    }
+    
+    // Fallback demo data
+    const baseData = [25, 32, 28, 45, 38, 42, 35, 48, 41, 36, 29, 33];
+    return baseData.map(val => val + Math.floor(Math.random() * 10));
 }
 
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('profilePicture');
     window.location.href = 'auth.html';
 }
-
-// Upgrade Modal Functions
-function openUpgradeModal() {
-    document.getElementById('upgradeModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeUpgradeModal() {
-    document.getElementById('upgradeModal').classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-function selectPlan(plan) {
-    alert(`You selected the ${plan.toUpperCase()} plan!\n\nThis is a demo. In production, this would redirect to payment processing.`);
-    closeUpgradeModal();
-}
-
-// Close modal when clicking outside
-document.addEventListener('click', (e) => {
-    const modal = document.getElementById('upgradeModal');
-    if (e.target === modal) {
-        closeUpgradeModal();
+func
+tion updateMainChart(type) {
+    if (!charts.main) return;
+    
+    let newData;
+    let label = 'Workouts';
+    
+    switch(type) {
+        case 'workouts':
+            newData = generateMonthlyData();
+            label = 'Workouts';
+            break;
+        case 'duration':
+            newData = generateMonthlyData().map(val => val * 1.5);
+            label = 'Duration (hours)';
+            break;
+        case 'calories':
+            newData = generateMonthlyData().map(val => val * 10);
+            label = 'Calories';
+            break;
+        default:
+            newData = generateMonthlyData();
+            label = 'General Stats';
     }
+    
+    charts.main.data.datasets[0].data = newData;
+    charts.main.data.datasets[0].label = label;
+    charts.main.update('active');
+}
+
+// Make sidebar icons interactive
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.icon-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
 });
+
+// Add search functionality
+function initSearch() {
+    const searchInput = document.querySelector('.search-container input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('Searching for:', searchTerm);
+            // Add search logic here
+        });
+    }
+}
+
+// Initialize search when DOM is loaded
+document.addEventListener('DOMContentLoaded', initSearch);
