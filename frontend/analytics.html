@@ -57,7 +57,7 @@
             <div class="upgrade-card">
                 <h4>Additional features to enhance your fitness.</h4>
                 <p>Track more metrics and get insights</p>
-                <button class="btn-upgrade">Upgrade →</button>
+                <button class="btn-upgrade" onclick="openUpgradeModal()">Upgrade →</button>
             </div>
             <button class="btn-logout" onclick="logout()">
                 <i class="fas fa-sign-out-alt nav-icon"></i>
@@ -86,68 +86,112 @@
             </div>
             
             <div class="navbar-right">
-                <button class="icon-btn">
+                <button class="icon-btn" id="messageBtn">
                     <i class="fas fa-comment-dots"></i>
                 </button>
-                <button class="icon-btn">
+                <button class="icon-btn" id="notificationBtn" style="position: relative;">
                     <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount">3</span>
                 </button>
             </div>
         </nav>
 
         <!-- Dashboard Content -->
         <div class="dashboard-content">
+            <!-- Performance Analytics -->
             <div class="chart-section">
                 <div class="section-header">
                     <h2>Performance Analytics</h2>
-                    <button class="dropdown-btn">Monthly ▼</button>
+                    <select id="timeRange" style="padding: 0.5rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                        <option value="365">Last Year</option>
+                    </select>
                 </div>
                 <div class="chart-container">
-                    <canvas id="analyticsChart"></canvas>
+                    <canvas id="performanceChart"></canvas>
                 </div>
             </div>
             
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <!-- Workout Distribution -->
+                <div class="chart-card">
+                    <h3>Workout Distribution</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Heart Rate Analysis -->
+                <div class="chart-card">
+                    <h3>Heart Rate Analysis</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="heartRateChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Calories vs Duration -->
+                <div class="chart-card">
+                    <h3>Calories vs Duration</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Weekly Progress -->
+                <div class="chart-card">
+                    <h3>Weekly Progress</h3>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Insights Section -->
             <div class="dashboard-grid" style="margin-top: 2rem;">
                 <div class="stats-section">
                     <div class="section-header">
-                        <h2>Workout Breakdown</h2>
+                        <h2>Performance Insights</h2>
                     </div>
-                    <div class="chart-container" style="height: 250px;">
-                        <canvas id="breakdownChart"></canvas>
+                    <div id="insightsContainer" style="display: grid; gap: 1rem;">
+                        <!-- Insights will be populated by JavaScript -->
                     </div>
                 </div>
                 
                 <div class="stats-section">
                     <div class="section-header">
-                        <h2>Progress Insights</h2>
+                        <h2>Personal Records</h2>
                     </div>
-                    <div style="padding: 1rem 0;">
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                <span style="color: #9ca3af; font-size: 0.875rem;">Weekly Goal</span>
-                                <span style="color: #fff; font-weight: 600;">75%</span>
+                    <div style="display: grid; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #0f1419; border-radius: 8px;">
+                            <div>
+                                <div style="color: #9ca3af; font-size: 0.875rem;">Highest Calories</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #ec4899;" id="maxCalories">0 kcal</div>
                             </div>
-                            <div style="height: 8px; background: #0f1419; border-radius: 4px; overflow: hidden;">
-                                <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #a855f7, #7c3aed);"></div>
-                            </div>
+                            <i class="fas fa-fire" style="font-size: 2rem; color: #ec4899;"></i>
                         </div>
-                        <div style="margin-bottom: 1.5rem;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                <span style="color: #9ca3af; font-size: 0.875rem;">Monthly Goal</span>
-                                <span style="color: #fff; font-weight: 600;">60%</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #0f1419; border-radius: 8px;">
+                            <div>
+                                <div style="color: #9ca3af; font-size: 0.875rem;">Longest Workout</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #3b82f6;" id="maxDuration">0 min</div>
                             </div>
-                            <div style="height: 8px; background: #0f1419; border-radius: 4px; overflow: hidden;">
-                                <div style="width: 60%; height: 100%; background: linear-gradient(90deg, #3b82f6, #2563eb);"></div>
-                            </div>
+                            <i class="fas fa-clock" style="font-size: 2rem; color: #3b82f6;"></i>
                         </div>
-                        <div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                <span style="color: #9ca3af; font-size: 0.875rem;">Yearly Goal</span>
-                                <span style="color: #fff; font-weight: 600;">45%</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #0f1419; border-radius: 8px;">
+                            <div>
+                                <div style="color: #9ca3af; font-size: 0.875rem;">Peak Heart Rate</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;" id="maxHeartRate">0 bpm</div>
                             </div>
-                            <div style="height: 8px; background: #0f1419; border-radius: 4px; overflow: hidden;">
-                                <div style="width: 45%; height: 100%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                            <i class="fas fa-heartbeat" style="font-size: 2rem; color: #ef4444;"></i>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #0f1419; border-radius: 8px;">
+                            <div>
+                                <div style="color: #9ca3af; font-size: 0.875rem;">Workout Streak</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;" id="workoutStreak">0 days</div>
                             </div>
+                            <i class="fas fa-trophy" style="font-size: 2rem; color: #10b981;"></i>
                         </div>
                     </div>
                 </div>
