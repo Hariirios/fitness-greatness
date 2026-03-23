@@ -1,0 +1,42 @@
+{
+  "name": "FitnessGuard - Personal Fitness Tracker",
+  "short_name": "FitnessGuard",
+  "description": "Track your fitness journey with AI-powered calorie prediction, workout analytics, and goal tracking",
+  "start_url": "/overview.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff6b35",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "fitness", "lifestyle"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Calculate Calories",
+      "short_name": "Workouts",
+      "description": "Calculate calories burned",
+      "url": "/workouts.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "View History",
+      "short_name": "History",
+      "description": "View workout history",
+      "url": "/history.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

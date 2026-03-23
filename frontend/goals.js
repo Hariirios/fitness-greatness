@@ -11,13 +11,9 @@ if (!token) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     currentUser = JSON.parse(localStorage.getItem('user'));
-    document.getElementById('userName').textContent = currentUser.username;
     
     // Load profile picture
-    const profilePic = localStorage.getItem('profilePicture');
-    if (profilePic) {
-        document.querySelector('.user-avatar').innerHTML = `<img src="${profilePic}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-    }
+    loadProfilePicture();
     
     loadGoals();
     await loadWorkouts();
@@ -25,6 +21,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderGoals();
     updateStats();
 });
+
+function loadProfilePicture() {
+    const profilePic = localStorage.getItem('profilePicture');
+    const userProfileImgs = document.querySelectorAll('.user-profile img');
+    
+    if (profilePic && userProfileImgs.length > 0) {
+        userProfileImgs.forEach(img => {
+            img.src = profilePic;
+        });
+    }
+}
 
 function loadGoals() {
     const savedGoals = localStorage.getItem('fitnessGoals');
@@ -366,6 +373,20 @@ function showSuccess(message) {
         successDiv.remove();
     }, 3000);
 }
+
+function toggleUserMenu() {
+    const menu = document.getElementById('userMenu');
+    menu.classList.toggle('hidden');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('userMenu');
+    const profile = document.querySelector('.user-profile');
+    if (profile && !profile.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
 
 function logout() {
     localStorage.removeItem('token');

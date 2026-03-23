@@ -3,289 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Analytics Dashboard</title>
-    <link rel="stylesheet" href="overview-style.css">
+    <meta name="description" content="Track your fitness journey with AI-powered calorie prediction, workout analytics, and goal tracking.">
+    <meta name="keywords" content="fitness, workout, calories, health, tracking, analytics">
+    <meta name="author" content="FitnessGuard">
+    <meta name="theme-color" content="#ff6b35">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="FitnessGuard - Your Personal Fitness Tracker">
+    <meta property="og:description" content="Track your fitness journey with AI-powered calorie prediction">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="FitnessGuard - Your Personal Fitness Tracker">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    
+    <title>Dashboard - FitnessGuard</title>
+    <link rel="stylesheet" href="dashboard.css?v=2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-    <!-- Background -->
-    <div class="background">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-    </div>
-
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="sidebar-icons">
-            <div class="icon-item active" onclick="window.location.href='overview.html'">
-                <i class="fas fa-home"></i>
-            </div>
-            <div class="icon-item" onclick="window.location.href='analytics.html'">
-                <i class="fas fa-chart-bar"></i>
-            </div>
-            <div class="icon-item" onclick="window.location.href='history.html'">
-                <i class="fas fa-list"></i>
-            </div>
-            <div class="icon-item" onclick="window.location.href='workouts.html'">
-                <i class="fas fa-dumbbell"></i>
-            </div>
-            <div class="icon-item" onclick="window.location.href='goals.html'">
-                <i class="fas fa-bullseye"></i>
-            </div>
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
         </div>
+        
+        <nav class="nav-icons">
+            <button class="nav-icon-item" id="searchBtn" title="Search" style="background: none; border: none; cursor: pointer;">
+                <i class="fas fa-search"></i>
+            </button>
+            <a href="overview.html" class="nav-icon-item active" title="Dashboard">
+                <i class="fas fa-chart-bar"></i>
+            </a>
+            <a href="workouts.html" class="nav-icon-item" title="Workouts">
+                <i class="fas fa-dumbbell"></i>
+            </a>
+            <a href="settings.html" class="nav-icon-item" title="Settings">
+                <i class="fas fa-cog"></i>
+            </a>
+        </nav>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <div class="search-container">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Find any inspiring moment...">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-tabs">
+                <a href="overview.html" class="nav-tab active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="workouts.html" class="nav-tab">
+                    <i class="fas fa-running"></i> Activities
+                </a>
+                <a href="analytics.html" class="nav-tab">
+                    <i class="fas fa-heart"></i> Health status
+                </a>
+                <a href="goals.html" class="nav-tab">
+                    <i class="fas fa-calendar"></i> Training Planning
+                </a>
             </div>
             
-            <div class="top-bar-right">
-                <button class="notification-btn">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face" alt="User" id="userAvatarImg">
+            <div class="top-nav-right">
+                <button class="icon-btn" id="favoritesBtn" title="Favorites"><i class="fas fa-star"></i></button>
+                <button class="icon-btn" id="darkModeBtn" title="Dark Mode"><i class="fas fa-moon"></i></button>
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600;" id="userAvatar">
+                        <i class="fas fa-user"></i>
                     </div>
-                    <div class="user-info">
-                        <span class="user-name" id="userName">Sarah Lee</span>
-                        <span class="user-email">sarah@fitness.com</span>
-                    </div>
+                    <span id="userName"></span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
+                <div class="user-menu hidden" id="userMenu">
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="history.html"><i class="fas fa-history"></i> History</a>
+                    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
             </div>
-        </div>
+        </nav>
 
         <!-- Dashboard Content -->
-        <div class="dashboard-container">
-            <!-- Header -->
-            <div class="dashboard-header">
-                <h1>Analytics</h1>
-                <div class="header-controls">
-                    <button class="filter-btn">
-                        <i class="fas fa-filter"></i>
-                        Filters
-                    </button>
-                    <button class="period-btn">
-                        <i class="fas fa-calendar"></i>
-                        This month
-                    </button>
-                    <button class="more-btn">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
+        <div class="dashboard">
+            <h1 class="greeting" id="greetingText">Hello</h1>
+            
+            <div class="dashboard-grid">
+                <!-- Total Workouts Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-dumbbell"></i> Total Workouts
+                        </div>
+                    </div>
+                    <div class="circular-progress" style="margin: 1rem auto;">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#a855f7" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="141.35" 
+                                    transform="rotate(-90 50 50)" id="workoutsCircle"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value" id="totalWorkoutsCard">0</span>
+                            <span class="label">workouts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Calories Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-fire"></i> Total Calories
+                        </div>
+                    </div>
+                    <div class="circular-progress" style="margin: 1rem auto;">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ec4899" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="70.7" 
+                                    transform="rotate(-90 50 50)" id="caloriesCircle"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value" id="totalCaloriesCard">0</span>
+                            <span class="label">kcal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Average Calories Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i> Avg Calories
+                        </div>
+                    </div>
+                    <div class="circular-progress" style="margin: 1rem auto;">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="141.35" 
+                                    transform="rotate(-90 50 50)" id="avgCaloriesCircle"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value" id="avgCaloriesCard">0</span>
+                            <span class="label">kcal/workout</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Duration Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-clock"></i> Total Duration
+                        </div>
+                    </div>
+                    <div class="circular-progress" style="margin: 1rem auto;">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#10b981" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="188.5" 
+                                    transform="rotate(-90 50 50)" id="durationCircle"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value" id="totalDurationCard">0</span>
+                            <span class="label">minutes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avg Heart Rate Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-heartbeat"></i> Avg Heart Rate
+                        </div>
+                    </div>
+                    <div class="circular-progress" style="margin: 1rem auto;">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="94.2" 
+                                    transform="rotate(-90 50 50)" id="heartRateCircle"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value" id="avgHeartRateCard">0</span>
+                            <span class="label">bpm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fitness Score Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-trophy"></i> Fitness Score
+                        </div>
+                    </div>
+                    <div class="circular-progress" style="margin: 1rem auto;">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ff6b35" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="282.7" 
+                                    transform="rotate(-90 50 50)" id="scoreCircle"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value" id="fitnessScore">0</span>
+                            <span class="label">/1000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calories Trend Chart -->
+                <div class="card" style="grid-column: span 3;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-area"></i> Calories Trend
+                        </div>
+                    </div>
+                    <div style="height: 250px; position: relative; margin-top: 1rem;">
+                        <canvas id="caloriesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card" style="grid-column: span 3;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-bolt"></i> Quick Actions
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <a href="workouts.html" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 10px; text-decoration: none; color: #fff; transition: all 0.3s;">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calculator" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">Calculate Calories</div>
+                                <small style="color: #9ca3af;">Start a new workout</small>
+                            </div>
+                        </a>
+                        <a href="goals.html" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 10px; text-decoration: none; color: #fff; transition: all 0.3s;">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-bullseye" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">Set Goals</div>
+                                <small style="color: #9ca3af;">Create fitness goals</small>
+                            </div>
+                        </a>
+                        <a href="analytics.html" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 10px; text-decoration: none; color: #fff; transition: all 0.3s;">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-chart-line" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">View Analytics</div>
+                                <small style="color: #9ca3af;">Track your progress</small>
+                            </div>
+                        </a>
+                        <a href="history.html" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(236, 72, 153, 0.1); border-radius: 10px; text-decoration: none; color: #fff; transition: all 0.3s;">
+                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-history" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">Workout History</div>
+                                <small style="color: #9ca3af;">View past workouts</small>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Main Dashboard Grid -->
-            <div class="dashboard-grid">
-                <!-- Left Section -->
-                <div class="left-section">
-                    <!-- Stats Tabs -->
-                    <div class="stats-tabs">
-                        <button class="tab-btn">
-                            <i class="fas fa-chart-pie"></i>
-                            General stats
-                        </button>
-                        <button class="tab-btn active">Workouts</button>
-                        <button class="tab-btn">Duration</button>
-                        <button class="tab-btn">Calories</button>
+                <div class="card activities-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-fire"></i> Activities
+                        </div>
+                        <button class="card-menu"><i class="fas fa-ellipsis-h"></i></button>
                     </div>
-
-                    <!-- Main Chart -->
-                    <div class="main-chart-container">
-                        <div class="chart-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Total workouts</span>
-                                <div class="stat-value">
-                                    <span class="value" id="totalWorkouts">352</span>
-                                    <span class="change positive">+2%</span>
-                                </div>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Avg. per session</span>
-                                <div class="stat-value">
-                                    <span class="value" id="avgCalories">15</span>
-                                    <span class="change negative">-8%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chart-area">
-                            <canvas id="mainChart"></canvas>
-                        </div>
+                    
+                    <div class="streak-alert">
+                        <i class="fas fa-star"></i> You're on a roll with your streak
+                        <button class="close-btn"><i class="fas fa-times"></i></button>
                     </div>
-
-                    <!-- Bottom Section -->
-                    <div class="bottom-section">
-                        <!-- Time Spent -->
-                        <div class="time-spent-card">
-                            <div class="card-header">
-                                <i class="fas fa-clock"></i>
-                                <span>Time spent in workouts</span>
-                            </div>
-                            <div class="participants-list">
-                                <div class="participant-item">
-                                    <div class="participant-info">
-                                        <div class="participant-avatar">
-                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face" alt="User">
-                                        </div>
-                                        <div class="participant-details">
-                                            <span class="name">Ryan Brightwood</span>
-                                            <span class="role">Fitness Manager</span>
-                                        </div>
-                                    </div>
-                                    <div class="time-info">
-                                        <span class="time">42h 14m</span>
-                                        <div class="progress-bar">
-                                            <div class="progress" style="width: 75%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="participant-item">
-                                    <div class="participant-info">
-                                        <div class="participant-avatar">
-                                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face" alt="User">
-                                        </div>
-                                        <div class="participant-details">
-                                            <span class="name">Lila Casterly</span>
-                                            <span class="role">Senior Software Developer</span>
-                                        </div>
-                                    </div>
-                                    <div class="time-info">
-                                        <span class="time">38h 47m</span>
-                                        <div class="progress-bar">
-                                            <div class="progress" style="width: 65%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    
+                    <div class="time-filters">
+                        <button class="time-filter active">Week</button>
+                        <button class="time-filter">Month</button>
+                        <button class="time-filter">Year</button>
+                        <button class="time-filter">All time</button>
+                    </div>
+                    
+                    <div class="week-info">
+                        <span>This week</span>
+                        <span class="last-week">Last week <span class="badge">3h 24m</span></span>
+                    </div>
+                    
+                    <div style="height: 150px; position: relative;">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                    
+                    <div class="today-stats">
+                        <span>Today</span>
+                        <div class="stat-items">
+                            <span><i class="fas fa-running"></i> 1 activities/bike ride</span>
+                            <span><i class="fas fa-route"></i> 28.50 km</span>
                         </div>
+                        <button class="card-menu"><i class="fas fa-ellipsis-h"></i></button>
+                    </div>
+                </div>
 
-                        <!-- Performance Ratio -->
-                        <div class="performance-card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Performance ratio</span>
-                            </div>
-                            <div class="participants-list">
-                                <div class="participant-item">
-                                    <div class="participant-info">
-                                        <div class="participant-avatar">
-                                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" alt="User">
-                                        </div>
-                                        <div class="participant-details">
-                                            <span class="name">Luna Petrenko</span>
-                                            <span class="role">Product Marketing</span>
-                                        </div>
-                                    </div>
-                                    <div class="performance-info">
-                                        <span class="performance">78%</span>
-                                        <div class="progress-bar">
-                                            <div class="progress" style="width: 78%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="participant-item">
-                                    <div class="participant-info">
-                                        <div class="participant-avatar">
-                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face" alt="User">
-                                        </div>
-                                        <div class="participant-details">
-                                            <span class="name">Alex Staffel</span>
-                                            <span class="role">Technical Lead</span>
-                                        </div>
-                                    </div>
-                                    <div class="performance-info">
-                                        <span class="performance">65%</span>
-                                        <div class="progress-bar">
-                                            <div class="progress" style="width: 65%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Walk Card -->
+                <div class="card metric-card">
+                    <div class="card-header">
+                        <span><i class="fas fa-walking"></i> Walk</span>
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                    </div>
+                    <div class="circular-progress">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#ff6b35" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="70.7" 
+                                    transform="rotate(-90 50 50)"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value">3986</span>
+                            <span class="label">Steps</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Section -->
-                <div class="right-section">
-                    <!-- Platforms Card -->
-                    <div class="platforms-card">
-                        <div class="card-header">
-                            <i class="fas fa-desktop"></i>
-                            <span>Platforms</span>
-                        </div>
-                        <div class="platforms-list">
-                            <div class="platform-item">
-                                <div class="platform-info">
-                                    <div class="platform-dot google"></div>
-                                    <span>Google Meet</span>
-                                </div>
-                                <span class="percentage">68%</span>
-                            </div>
-                            <div class="platform-item">
-                                <div class="platform-info">
-                                    <div class="platform-dot zoom"></div>
-                                    <span>Zoom</span>
-                                </div>
-                                <span class="percentage">43%</span>
-                            </div>
-                            <div class="platform-item">
-                                <div class="platform-info">
-                                    <div class="platform-dot teams"></div>
-                                    <span>MS Teams</span>
-                                </div>
-                                <span class="percentage">12%</span>
-                            </div>
-                        </div>
-                        <div class="platforms-chart">
-                            <canvas id="platformsChart"></canvas>
-                        </div>
+                <!-- Heart Rate Card -->
+                <div class="card heart-rate-card">
+                    <div class="card-header">
+                        <span><i class="fas fa-heartbeat"></i> Heart Rate</span>
+                        <select class="time-select">
+                            <option>Hourly</option>
+                            <option>Daily</option>
+                        </select>
                     </div>
+                    <div style="height: 120px; position: relative;">
+                        <canvas id="heartRateChart"></canvas>
+                    </div>
+                </div>
 
-                    <!-- Sentiments Card -->
-                    <div class="sentiments-card">
-                        <div class="card-header">
-                            <i class="fas fa-smile"></i>
-                            <span>Sentiments</span>
-                        </div>
-                        <div class="sentiments-list">
-                            <div class="sentiment-item">
-                                <div class="sentiment-info">
-                                    <div class="sentiment-dot positive"></div>
-                                    <span>Positive</span>
-                                </div>
-                                <span class="percentage">74%</span>
-                            </div>
-                            <div class="sentiment-item">
-                                <div class="sentiment-info">
-                                    <div class="sentiment-dot negative"></div>
-                                    <span>Negative</span>
-                                </div>
-                                <span class="percentage">5%</span>
-                            </div>
-                            <div class="sentiment-item">
-                                <div class="sentiment-info">
-                                    <div class="sentiment-dot neutral"></div>
-                                    <span>Neutral</span>
-                                </div>
-                                <span class="percentage">21%</span>
-                            </div>
-                        </div>
-                        <div class="sentiments-chart">
-                            <canvas id="sentimentsChart"></canvas>
+                <!-- Stress Card -->
+                <div class="card metric-card">
+                    <div class="card-header">
+                        <span><i class="fas fa-brain"></i> Stress</span>
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                    </div>
+                    <div class="circular-progress">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#4ade80" stroke-width="8" 
+                                    stroke-dasharray="282.7" stroke-dashoffset="188.5" 
+                                    transform="rotate(-90 50 50)"/>
+                        </svg>
+                        <div class="progress-value">
+                            <span class="value">35</span>
+                            <span class="label">Normal</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- Water Card -->
+                <div class="card water-card">
+                    <div class="card-header">
+                        <span><i class="fas fa-tint"></i> Water</span>
+                        <i class="fas fa-arrow-up-right-from-square"></i>
+                    </div>
+                    <div class="water-bars">
+                        <div class="bar" style="height: 60%"></div>
+                        <div class="bar" style="height: 80%"></div>
+                        <div class="bar" style="height: 40%"></div>
+                        <div class="bar" style="height: 90%"></div>
+                        <div class="bar" style="height: 70%"></div>
+                        <div class="bar active" style="height: 50%"></div>
+                    </div>
+                    <span class="water-amount">1.5 liters</span>
+                </div>
+
+                <!-- Sleep Score Card -->
+                <div class="card sleep-card">
+                    <div class="card-header">
+                        <span><i class="fas fa-moon"></i> Sleep score</span>
+                        <button class="card-menu"><i class="fas fa-ellipsis-h"></i></button>
+                    </div>
+                    <div style="height: 150px; position: relative;">
+                        <canvas id="sleepChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Calories Analysis Card -->
+                <div class="card calories-card">
+                    <div class="card-header">
+                        <span><i class="fas fa-chart-line"></i> Calories Analysis</span>
+                        <a href="#" class="show-all">Show all</a>
+                    </div>
+                    <div class="bmi-info">
+                        <span>BMI 24.0 (Normal)</span>
+                    </div>
+                    <div class="calorie-bars">
+                        <div class="calorie-bar">
+                            <span>18.5</span>
+                            <div class="bar-fill" style="width: 30%"></div>
+                            <span>25.0</span>
+                            <span>30.0</span>
+                        </div>
+                    </div>
+                    <div class="nutrition-stats">
+                        <div class="nutrition-item">
+                            <span>Protein</span>
+                            <div class="nutrition-bar">
+                                <div class="bar-progress" style="width: 75%"></div>
+                            </div>
+                            <span>120.55 g <small>Avg. intake</small></span>
+                            <span>160.55 Goal</span>
+                            <span>43.5%</span>
+                        </div>
+                        <div class="nutrition-item">
+                            <span>Carbs</span>
+                            <div class="nutrition-bar">
+                                <div class="bar-progress" style="width: 60%"></div>
+                            </div>
+                            <span>120.55 g <small>Avg. intake</small></span>
+                            <span>209.00 Goal</span>
+                            <span>43.5%</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer style="background: #0f0f0f; padding: 2rem; text-align: center; border-top: 1px solid #2a2a2a; margin-left: 70px;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem; text-align: left;">
+                <div>
+                    <h4 style="color: #ff6b35; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-heartbeat"></i> FitnessGuard
+                    </h4>
+                    <p style="color: #9ca3af; font-size: 0.875rem;">Track your fitness journey with AI-powered insights and analytics.</p>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">Quick Links</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="overview.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Dashboard</a>
+                        <a href="workouts.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Workouts</a>
+                        <a href="analytics.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Analytics</a>
+                        <a href="goals.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Goals</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">Account</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="settings.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Settings</a>
+                        <a href="history.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">History</a>
+                        <a href="#" onclick="logout()" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Logout</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">Connect</h4>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div style="padding-top: 2rem; border-top: 1px solid #2a2a2a; color: #6b7280; font-size: 0.875rem;">
+                <p>&copy; 2024 FitnessGuard. All rights reserved. Made with <i class="fas fa-heart" style="color: #ff6b35;"></i> for fitness enthusiasts.</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="overview.js"></script>
 </body>

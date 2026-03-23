@@ -11,19 +11,26 @@ if (!token) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     currentUser = JSON.parse(localStorage.getItem('user'));
-    document.getElementById('userName').textContent = currentUser.username;
     
     // Load profile picture
-    const profilePic = localStorage.getItem('profilePicture');
-    if (profilePic) {
-        document.querySelector('.user-avatar').innerHTML = `<img src="${profilePic}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-    }
+    loadProfilePicture();
     
     await loadWorkouts();
     updateStats();
     renderTable();
     initEventListeners();
 });
+
+function loadProfilePicture() {
+    const profilePic = localStorage.getItem('profilePicture');
+    const userProfileImgs = document.querySelectorAll('.user-profile img');
+    
+    if (profilePic && userProfileImgs.length > 0) {
+        userProfileImgs.forEach(img => {
+            img.src = profilePic;
+        });
+    }
+}
 
 async function loadWorkouts() {
     try {
@@ -39,22 +46,16 @@ async function loadWorkouts() {
         const data = await response.json();
         workoutHistory = data.workouts || [];
         filteredHistory = [...workoutHistory];
+        console.log('Loaded workouts:', workoutHistory.length);
     } catch (error) {
-        console.error('Failed to load workouts');
+        console.error('Failed to load workouts:', error);
     }
 }
 
 function initEventListeners() {
-    // Time filter
     document.getElementById('timeFilter').addEventListener('change', filterWorkouts);
-    
-    // Search
     document.getElementById('searchInput').addEventListener('input', searchWorkouts);
-    
-    // Export
     document.getElementById('exportBtn').addEventListener('click', exportData);
-    
-    // Clear all
     document.getElementById('clearAllBtn').addEventListener('click', clearAllWorkouts);
 }
 
@@ -87,38 +88,20 @@ function searchWorkouts() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     
     if (!searchTerm) {
-        filterWorkouts();
-        return;
+        filteredHistory = [...workoutHistory];
+    } else {
+        filteredHistory = workoutHistory.filter(workout => {
+            const date = new Date(workout.created_at).toLocaleDateString().toLowerCase();
+            const calories = workout.calories.toString();
+            const duration = workout.duration.toString();
+            
+            return date.includes(searchTerm) || 
+                   calories.includes(searchTerm) || 
+                   duration.includes(searchTerm);
+        });
     }
     
-    filteredHistory = workoutHistory.filter(workout => {
-        const date = new Date(workout.created_at).toLocaleDateString().toLowerCase();
-        const calories = workout.calories.toString();
-        const duration = workout.duration.toString();
-        const heartRate = workout.heart_rate.toString();
-        
-        return date.includes(searchTerm) || 
-               calories.includes(searchTerm) || 
-               duration.includes(searchTerm) || 
-               heartRate.includes(searchTerm);
-    });
-    
-    updateStats();
     renderTable();
-}
-
-function updateStats() {
-    const totalCalories = filteredHistory.reduce((sum, w) => sum + w.calories, 0);
-    const totalWorkouts = filteredHistory.length;
-    const totalDuration = filteredHistory.reduce((sum, w) => sum + w.duration, 0);
-    const avgHeartRate = totalWorkouts > 0 
-        ? filteredHistory.reduce((sum, w) => sum + w.heart_rate, 0) / totalWorkouts 
-        : 0;
-    
-    document.getElementById('totalCaloriesHistory').textContent = Math.round(totalCalories);
-    document.getElementById('totalWorkoutsHistory').textContent = totalWorkouts;
-    document.getElementById('totalDurationHistory').textContent = `${Math.round(totalDuration)}m`;
-    document.getElementById('avgHeartRateHistory').textContent = Math.round(avgHeartRate);
 }
 
 function renderTable() {
@@ -127,10 +110,10 @@ function renderTable() {
     if (filteredHistory.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align: center; color: #6b7280; padding: 3rem;">
-                    <i class="fas fa-dumbbell" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <td colspan="7" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <i class="fas fa-dumbbell" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; display: block;"></i>
                     <p>No workout history found</p>
-                    <small>Try adjusting your filters or <a href="workouts.html" style="color: #a855f7;">add some workouts</a></small>
+                    <small>Start by <a href="workouts.html" style="color: #ff6b35; text-decoration: none;">calculating calories</a> and saving workouts</small>
                 </td>
             </tr>
         `;
@@ -138,36 +121,47 @@ function renderTable() {
     }
     
     tbody.innerHTML = filteredHistory.map(workout => {
+        const date = new Date(workout.created_at);
         const intensity = getIntensity(workout.heart_rate);
         const intensityColor = getIntensityColor(intensity);
         
         return `
-            <tr>
-                <td>${new Date(workout.created_at).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })}</td>
-                <td><span style="color: #ec4899; font-weight: 600;">${Math.round(workout.calories)}</span> kcal</td>
-                <td>${workout.duration} min</td>
-                <td>${workout.heart_rate} bpm</td>
-                <td>${workout.body_temp}°C</td>
-                <td>
-                    <span style="padding: 0.25rem 0.75rem; background: ${intensityColor}; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+            <tr style="border-bottom: 1px solid #2a2a2a; transition: all 0.3s;" onmouseover="this.style.background='#2a2a2a'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 1rem;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 600;">${date.toLocaleDateString()}</span>
+                        <span style="color: #6b7280; font-size: 0.875rem;">${date.toLocaleTimeString()}</span>
+                    </div>
+                </td>
+                <td style="padding: 1rem;">
+                    <span style="color: #ec4899; font-weight: 600; font-size: 1.125rem;">
+                        <i class="fas fa-fire"></i> ${Math.round(workout.calories)}
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    <span style="color: #3b82f6; font-weight: 600;">
+                        <i class="fas fa-clock"></i> ${workout.duration} min
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    <span style="color: #ef4444; font-weight: 600;">
+                        <i class="fas fa-heartbeat"></i> ${workout.heart_rate} bpm
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    <span style="color: #f59e0b; font-weight: 600;">
+                        <i class="fas fa-thermometer-half"></i> ${workout.body_temp}°C
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    <span style="padding: 0.375rem 0.875rem; background: ${intensityColor}; border-radius: 20px; font-size: 0.875rem; font-weight: 600;">
                         ${intensity}
                     </span>
                 </td>
-                <td>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="viewWorkout(${workout.id})" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: none; padding: 0.375rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button onclick="deleteWorkout(${workout.id})" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 0.375rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
+                <td style="padding: 1rem; text-align: center;">
+                    <button onclick="deleteWorkout(${workout.id})" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.color='#ef4444'">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </td>
             </tr>
         `;
@@ -183,34 +177,30 @@ function getIntensity(heartRate) {
 
 function getIntensityColor(intensity) {
     switch (intensity) {
-        case 'Low': return 'rgba(16, 185, 129, 0.15)';
-        case 'Moderate': return 'rgba(245, 158, 11, 0.15)';
-        case 'High': return 'rgba(239, 68, 68, 0.15)';
-        case 'Very High': return 'rgba(168, 85, 247, 0.15)';
-        default: return 'rgba(107, 114, 128, 0.15)';
+        case 'Low': return 'rgba(16, 185, 129, 0.2)';
+        case 'Moderate': return 'rgba(59, 130, 246, 0.2)';
+        case 'High': return 'rgba(245, 158, 11, 0.2)';
+        case 'Very High': return 'rgba(239, 68, 68, 0.2)';
+        default: return 'rgba(107, 114, 128, 0.2)';
     }
 }
 
-function viewWorkout(workoutId) {
-    const workout = workoutHistory.find(w => w.id === workoutId);
-    if (!workout) return;
+function updateStats() {
+    const totalCalories = filteredHistory.reduce((sum, w) => sum + w.calories, 0);
+    const totalWorkouts = filteredHistory.length;
+    const totalDuration = filteredHistory.reduce((sum, w) => sum + w.duration, 0);
+    const avgHeartRate = totalWorkouts > 0 
+        ? Math.round(filteredHistory.reduce((sum, w) => sum + w.heart_rate, 0) / totalWorkouts)
+        : 0;
     
-    alert(`Workout Details:
-    
-Date: ${new Date(workout.created_at).toLocaleString()}
-Calories: ${Math.round(workout.calories)} kcal
-Duration: ${workout.duration} minutes
-Heart Rate: ${workout.heart_rate} bpm
-Body Temperature: ${workout.body_temp}°C
-Age: ${workout.age} years
-Height: ${workout.height} cm
-Weight: ${workout.weight} kg
-Gender: ${workout.gender === 1 ? 'Male' : 'Female'}
-Intensity: ${getIntensity(workout.heart_rate)}`);
+    document.getElementById('totalCaloriesHistory').textContent = Math.round(totalCalories);
+    document.getElementById('totalWorkoutsHistory').textContent = totalWorkouts;
+    document.getElementById('totalDurationHistory').textContent = totalDuration;
+    document.getElementById('avgHeartRateHistory').textContent = avgHeartRate;
 }
 
 async function deleteWorkout(workoutId) {
-    if (!confirm('Delete this workout? This action cannot be undone.')) return;
+    if (!confirm('Delete this workout?')) return;
     
     try {
         const response = await fetch(`${API_URL}/workouts/${workoutId}`, {
@@ -226,29 +216,30 @@ async function deleteWorkout(workoutId) {
         await loadWorkouts();
         filterWorkouts();
         
-        showSuccess('Workout deleted successfully!');
+        showNotification('Workout deleted successfully!', 'success');
     } catch (error) {
-        alert('Failed to delete workout');
+        showNotification('Failed to delete workout', 'error');
     }
 }
 
 async function clearAllWorkouts() {
-    if (!confirm('Delete ALL workouts? This action cannot be undone!')) return;
+    if (!confirm('Delete ALL workouts? This cannot be undone!')) return;
     
     try {
-        for (const workout of workoutHistory) {
-            await fetch(`${API_URL}/workouts/${workout.id}`, {
+        const deletePromises = workoutHistory.map(workout => 
+            fetch(`${API_URL}/workouts/${workout.id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
-            });
-        }
+            })
+        );
         
+        await Promise.all(deletePromises);
         await loadWorkouts();
         filterWorkouts();
         
-        showSuccess('All workouts cleared!');
+        showNotification('All workouts cleared!', 'success');
     } catch (error) {
-        alert('Failed to clear workouts');
+        showNotification('Failed to clear workouts', 'error');
     }
 }
 
@@ -258,54 +249,82 @@ function exportData() {
         return;
     }
     
-    const csvContent = [
-        ['Date', 'Calories', 'Duration (min)', 'Heart Rate (bpm)', 'Body Temp (°C)', 'Age', 'Height (cm)', 'Weight (kg)', 'Gender', 'Intensity'],
-        ...filteredHistory.map(w => [
-            new Date(w.created_at).toLocaleString(),
-            Math.round(w.calories),
-            w.duration,
-            w.heart_rate,
-            w.body_temp,
-            w.age,
-            w.height,
-            w.weight,
-            w.gender === 1 ? 'Male' : 'Female',
-            getIntensity(w.heart_rate)
-        ])
+    const csv = [
+        ['Date', 'Time', 'Calories', 'Duration (min)', 'Heart Rate (bpm)', 'Body Temp (°C)', 'Gender', 'Age', 'Height (cm)', 'Weight (kg)'],
+        ...filteredHistory.map(w => {
+            const date = new Date(w.created_at);
+            return [
+                date.toLocaleDateString(),
+                date.toLocaleTimeString(),
+                Math.round(w.calories),
+                w.duration,
+                w.heart_rate,
+                w.body_temp,
+                w.gender === 0 ? 'Female' : 'Male',
+                w.age,
+                w.height,
+                w.weight
+            ];
+        })
     ].map(row => row.join(',')).join('\n');
     
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `fitness-history-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
-    window.URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
     
-    showSuccess('Data exported successfully!');
+    showNotification('Data exported successfully!', 'success');
 }
 
-function showSuccess(message) {
-    // Create a temporary success message
-    const successDiv = document.createElement('div');
-    successDiv.style.cssText = `
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+    
+    notification.style.cssText = `
         position: fixed;
-        top: 2rem;
-        right: 2rem;
-        background: #10b981;
+        top: 100px;
+        right: 30px;
+        background: ${bgColor};
         color: white;
         padding: 1rem 1.5rem;
-        border-radius: 8px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         z-index: 1000;
-        animation: slideIn 0.3s ease-out;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 400px;
     `;
-    successDiv.textContent = message;
-    document.body.appendChild(successDiv);
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" style="font-size: 1.5rem;"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
     
     setTimeout(() => {
-        successDiv.remove();
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
+
+function toggleUserMenu() {
+    const menu = document.getElementById('userMenu');
+    menu.classList.toggle('hidden');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('userMenu');
+    const profile = document.querySelector('.user-profile');
+    if (profile && !profile.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
 
 function logout() {
     localStorage.removeItem('token');

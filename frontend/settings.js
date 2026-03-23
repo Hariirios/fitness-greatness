@@ -9,7 +9,6 @@ if (!token) {
 
 document.addEventListener('DOMContentLoaded', () => {
     currentUser = JSON.parse(localStorage.getItem('user'));
-    document.getElementById('userName').textContent = currentUser.username;
     document.getElementById('settingsUsername').value = currentUser.username;
     document.getElementById('settingsEmail').value = currentUser.email || '';
     
@@ -26,10 +25,12 @@ function loadProfilePicture() {
     const profilePic = localStorage.getItem('profilePicture');
     if (profilePic) {
         const profileAvatar = document.getElementById('profileAvatar');
-        const navbarAvatar = document.getElementById('navbarAvatar');
+        const userProfileImg = document.getElementById('userProfileImg');
         
         profileAvatar.innerHTML = `<img src="${profilePic}" style="width: 100%; height: 100%; object-fit: cover;">`;
-        navbarAvatar.innerHTML = `<img src="${profilePic}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        if (userProfileImg) {
+            userProfileImg.src = profilePic;
+        }
     }
 }
 
@@ -58,10 +59,12 @@ function uploadProfilePicture(e) {
         
         // Update UI
         const profileAvatar = document.getElementById('profileAvatar');
-        const navbarAvatar = document.getElementById('navbarAvatar');
+        const userProfileImg = document.getElementById('userProfileImg');
         
         profileAvatar.innerHTML = `<img src="${imageData}" style="width: 100%; height: 100%; object-fit: cover;">`;
-        navbarAvatar.innerHTML = `<img src="${imageData}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        if (userProfileImg) {
+            userProfileImg.src = imageData;
+        }
         
         // Show success message
         showSuccess('Profile picture updated!');
@@ -76,10 +79,12 @@ function removeProfilePicture() {
     localStorage.removeItem('profilePicture');
     
     const profileAvatar = document.getElementById('profileAvatar');
-    const navbarAvatar = document.getElementById('navbarAvatar');
+    const userProfileImg = document.getElementById('userProfileImg');
     
     profileAvatar.innerHTML = '<i class="fas fa-user"></i>';
-    navbarAvatar.innerHTML = '<i class="fas fa-user"></i>';
+    if (userProfileImg) {
+        userProfileImg.src = 'https://i.pravatar.cc/40';
+    }
     
     showSuccess('Profile picture removed!');
 }
@@ -93,23 +98,34 @@ function saveSettings() {
     currentUser.email = email;
     localStorage.setItem('user', JSON.stringify(currentUser));
     
-    // Update navbar
-    document.getElementById('userName').textContent = username;
-    
     showSuccess('Settings saved successfully!');
 }
 
 function showSuccess(message) {
     const btn = document.getElementById('saveSettings');
-    const originalText = btn.textContent;
-    btn.textContent = '✓ ' + message;
-    btn.style.background = '#10b981';
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> ' + message;
+    btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
     
     setTimeout(() => {
-        btn.textContent = originalText;
+        btn.innerHTML = originalHTML;
         btn.style.background = '';
     }, 2000);
 }
+
+function toggleUserMenu() {
+    const menu = document.getElementById('userMenu');
+    menu.classList.toggle('hidden');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('userMenu');
+    const profile = document.querySelector('.user-profile');
+    if (profile && !profile.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+    }
+});
 
 function logout() {
     localStorage.removeItem('token');

@@ -3,122 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Analytics - Login</title>
+    <title>Login - FitnessGuard</title>
     <link rel="stylesheet" href="auth.css">
+    <style>
+        /* Fallback icons if Font Awesome doesn't load */
+        .fas.fa-user::before { content: "👤"; }
+        .fas.fa-lock::before { content: "🔒"; }
+        .fas.fa-envelope::before { content: "📧"; }
+        .fas.fa-exclamation-triangle::before { content: "⚠️"; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-wrapper">
-            <!-- Left Side - Branding with Beach Image -->
-            <div class="auth-branding">
-                <div class="branding-content">
-                    <div class="brand-header">
-                        <span class="brand-logo">△</span>
-                        <span>FITNESS</span>
-                    </div>
-                    
-                    <div class="brand-main">
-                        <h1 class="brand-title">Don't have an<br>account?</h1>
-                        <p class="brand-subtitle">Register to access all the features of our service. Manage your fitness in one place. It's free!</p>
-                    </div>
-                    
-                    <div class="social-links">
-                        <div class="social-icon">📘</div>
-                        <div class="social-icon">�</div>
-                        <div class="social-icon">📷</div>
-                        <div class="social-icon">💼</div>
-                    </div>
-                </div>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Login</h1>
             </div>
-
-            <!-- Right Side - Forms -->
-            <div class="auth-forms">
-                <div class="forms-container">
-                    <!-- Signup Form -->
-                    <form id="signupForm" class="auth-form active">
-                        <div class="form-header">
-                            <h2>Sign up</h2>
-                        </div>
-
-                        <div id="signupErrorMessage" class="error-message hidden"></div>
-
-                        <div class="form-group">
-                            <label for="signupEmail">Email</label>
-                            <input type="email" id="signupEmail" placeholder="alexgorbachov@yandex.ru" required autocomplete="email">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="signupUsername">Login</label>
-                            <input type="text" id="signupUsername" placeholder="Choose username" required autocomplete="username">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="signupPassword">Password</label>
-                            <div class="password-input">
-                                <input type="password" id="signupPassword" placeholder="••••••••••••" required autocomplete="new-password">
-                                <button type="button" class="toggle-password" onclick="togglePassword('signupPassword')">
-                                    <span class="eye-icon">👁</span>
-                                </button>
-                            </div>
-                            <div class="password-strength" id="passwordStrength"></div>
-                        </div>
-
-                        <div class="terms-checkbox">
-                            <input type="checkbox" id="termsAccept" required>
-                            <label for="termsAccept">
-                                I agree to the all statements in <a href="#" class="link-primary">Terms of service</a>
-                            </label>
-                        </div>
-
-                        <button type="submit" class="btn-primary">
-                            <span>Sign up</span>
-                            <span class="btn-arrow">→</span>
-                        </button>
-
-                        <p class="switch-form">
-                            Have an account?
-                            <a href="#" id="showLogin" class="link-primary">Sign in</a>
-                        </p>
-                    </form>
-
-                    <!-- Login Form -->
-                    <form id="loginForm" class="auth-form">
-                        <div class="form-header">
-                            <h2>Sign in</h2>
-                        </div>
-
-                        <div id="errorMessage" class="error-message hidden"></div>
-
-                        <div class="form-group">
-                            <label for="loginUsername">Login</label>
-                            <input type="text" id="loginUsername" placeholder="Enter your username" required autocomplete="username">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="loginPassword">Password</label>
-                            <div class="password-input">
-                                <input type="password" id="loginPassword" placeholder="••••••••••••" required autocomplete="current-password">
-                                <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">
-                                    <span class="eye-icon">👁</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn-primary">
-                            <span>Sign in</span>
-                            <span class="btn-arrow">→</span>
-                        </button>
-
-                        <p class="switch-form">
-                            Don't have an account?
-                            <a href="#" id="showSignup" class="link-primary">Create one</a>
-                        </p>
-                    </form>
+            
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="loginUsername" value="07hashubham" required>
                 </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="loginPassword" value="password123" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Submit</button>
+                
+                <div class="auth-links">
+                    <a href="#" class="forgot-link" onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('forgotPasswordModal').classList.remove('hidden'); document.getElementById('forgotPasswordModal').classList.add('show'); return false;">Forgot Password?</a>
+                    <a href="#" class="signup-link" onclick="event.preventDefault(); event.stopPropagation(); if(!document.activeElement || document.activeElement.tagName !== 'INPUT') { document.querySelector('.login-container').classList.add('hidden'); document.querySelector('.register-container').classList.remove('hidden'); } return false;">SignUp</a>
+                </div>
+            </form>
+            
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
             </div>
         </div>
     </div>
-
+    
+    <!-- Hidden Register Form -->
+    <div class="register-container hidden" id="registerContainer">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Register</h1>
+            </div>
+            
+            <form id="registerForm" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="registerUsername" placeholder="Username" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="registerEmail" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="registerPassword" placeholder="Password" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Register</button>
+                
+                <div class="auth-links">
+                    <a href="#" class="back-link" onclick="event.preventDefault(); event.stopPropagation(); if(!document.activeElement || document.activeElement.tagName !== 'INPUT') { document.querySelector('.login-container').classList.remove('hidden'); document.querySelector('.register-container').classList.add('hidden'); } return false;">← Back to Login</a>
+                </div>
+            </form>
+            
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay hidden" id="forgotPasswordModal">
+        <div class="forgot-password-modal">
+            <div class="modal-close" onclick="document.getElementById('forgotPasswordModal').classList.remove('show'); document.getElementById('forgotPasswordModal').classList.add('hidden'); return false;">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <p>Enter your email address and we'll send you a reset link</p>
+            </div>
+            <form id="forgotPasswordForm" class="forgot-form">
+                <div class="input-group">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="forgotEmail" placeholder="Enter your email" required>
+                </div>
+                <button type="submit" class="submit-btn">Send Reset Link</button>
+                <div class="auth-links">
+                    <a href="#" class="back-link" onclick="document.getElementById('forgotPasswordModal').classList.remove('show'); document.getElementById('forgotPasswordModal').classList.add('hidden'); return false;">Back to Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <script src="auth.js"></script>
 </body>
 </html>

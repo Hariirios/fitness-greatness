@@ -57,6 +57,19 @@ class Database:
             )
         ''')
         
+        # Password reset tokens table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                token TEXT UNIQUE NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                used BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        ''')
+        
         conn.commit()
         conn.close()
     
@@ -89,6 +102,19 @@ class Database:
         cursor.execute(
             'SELECT id, username, email FROM users WHERE username = ? AND password_hash = ?',
             (username, password_hash)
+        )
+        user = cursor.fetchone()
+        conn.close()
+        
+        return dict(user) if user else None
+    
+    def get_user_by_email(self, email):
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            'SELECT id, username, email FROM users WHERE email = ?',
+            (email,)
         )
         user = cursor.fetchone()
         conn.close()
@@ -200,3 +226,67 @@ class Database:
         conn.close()
         
         return dict(stats) if stats else None
+    
+    def create_reset_token(self, user_id, token, expires_at):
+        """Create a password reset token"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
+            (user_id, token, expires_at)
+        )
+        conn.commit()
+        conn.close()
+        
+        return True
+    
+    def verify_reset_token(self, token):
+        """Verify if reset token is valid and not expired"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT user_id, expires_at, used FROM password_reset_tokens 
+            WHERE token = ? AND used = FALSE
+        ''', (token,))
+        
+        result = cursor.fetchone()
+        conn.close()
+        
+        if not result:
+            return None
+        
+        # Check if token is expired
+        expires_at = datetime.fromisoformat(result['expires_at'])
+        if datetime.now() > expires_at:
+            return None
+        
+        return result['user_id']
+    
+    def use_reset_token(self, token):
+        """Mark reset token as used"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            'UPDATE password_reset_tokens SET used = TRUE WHERE token = ?',
+            (token,)
+        )
+        conn.commit()
+        conn.close()
+    
+    def update_password(self, user_id, new_password):
+        """Update user password"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        password_hash = self.hash_password(new_password)
+        cursor.execute(
+            'UPDATE users SET password_hash = ? WHERE id = ?',
+            (password_hash, user_id)
+        )
+        conn.commit()
+        conn.close()
+        
+        return cursor.rowcount > 0

@@ -3,149 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Fitness Analytics</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Settings - FitnessGuard</title>
+    <link rel="stylesheet" href="dashboard.css?v=2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">
-            Fitness<span class="logo-accent">Guard</span>
+            <i class="fas fa-heartbeat"></i>
         </div>
         
-        <nav>
-            <div class="nav-section">
-                <p class="nav-section-title">General</p>
-                <a href="overview.html" class="nav-item">
-                    <i class="fas fa-chart-line nav-icon"></i>
-                    <span>Overview</span>
-                </a>
-                <a href="workouts.html" class="nav-item">
-                    <i class="fas fa-dumbbell nav-icon"></i>
-                    <span>Workouts</span>
-                </a>
-                <a href="history.html" class="nav-item">
-                    <i class="fas fa-history nav-icon"></i>
-                    <span>History</span>
-                </a>
-            </div>
-            
-            <div class="nav-section">
-                <p class="nav-section-title">Reports</p>
-                <a href="analytics.html" class="nav-item">
-                    <i class="fas fa-chart-bar nav-icon"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="goals.html" class="nav-item">
-                    <i class="fas fa-bullseye nav-icon"></i>
-                    <span>Goals</span>
-                </a>
-            </div>
-            
-            <div class="nav-section">
-                <p class="nav-section-title">Settings</p>
-                <a href="settings.html" class="nav-item active">
-                    <i class="fas fa-cog nav-icon"></i>
-                    <span>Settings</span>
-                </a>
-            </div>
-        </nav>
-        
-        <div class="sidebar-footer">
-            <div class="upgrade-card">
-                <h4>Additional features to enhance your fitness.</h4>
-                <p>Track more metrics and get insights</p>
-                <button class="btn-upgrade">Upgrade →</button>
-            </div>
-            <button class="btn-logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt nav-icon"></i>
-                <span>Log Out</span>
+        <nav class="nav-icons">
+            <button class="nav-icon-item" id="searchBtn" title="Search" style="background: none; border: none; cursor: pointer;">
+                <i class="fas fa-search"></i>
             </button>
-        </div>
+            <a href="overview.html" class="nav-icon-item" title="Dashboard">
+                <i class="fas fa-chart-bar"></i>
+            </a>
+            <a href="workouts.html" class="nav-icon-item" title="Workouts">
+                <i class="fas fa-dumbbell"></i>
+            </a>
+            <a href="settings.html" class="nav-icon-item active" title="Settings">
+                <i class="fas fa-cog"></i>
+            </a>
+        </nav>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Top Navbar -->
-        <nav class="navbar">
-            <div class="navbar-left">
-                <div class="user-avatar" id="navbarAvatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="user-info">
-                    <h3>Welcome! <span id="userName"></span></h3>
-                    <p>Fitness is a process, not a product.</p>
-                </div>
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-tabs">
+                <a href="overview.html" class="nav-tab">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="workouts.html" class="nav-tab">
+                    <i class="fas fa-running"></i> Activities
+                </a>
+                <a href="analytics.html" class="nav-tab">
+                    <i class="fas fa-heart"></i> Health status
+                </a>
+                <a href="goals.html" class="nav-tab">
+                    <i class="fas fa-calendar"></i> Training Planning
+                </a>
             </div>
             
-            <div class="search-bar">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" placeholder="Search Here">
-            </div>
-            
-            <div class="navbar-right">
-                <button class="icon-btn" id="messageBtn">
-                    <i class="fas fa-comment-dots"></i>
-                </button>
-                <button class="icon-btn" id="notificationBtn" style="position: relative;">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge" id="notificationCount">3</span>
-                </button>
+            <div class="top-nav-right">
+                <button class="icon-btn" title="Favorites"><i class="fas fa-star"></i></button>
+                <button class="icon-btn" title="Dark Mode"><i class="fas fa-moon"></i></button>
+                <button class="icon-btn" title="Notifications"><i class="fas fa-bell"></i></button>
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <img src="https://i.pravatar.cc/40" alt="User" id="userProfileImg">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-menu hidden" id="userMenu">
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="history.html"><i class="fas fa-history"></i> History</a>
+                    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
             </div>
         </nav>
 
         <!-- Dashboard Content -->
-        <div class="dashboard-content">
-            <div class="stats-section">
-                <div class="section-header">
-                    <h2>Profile Settings</h2>
-                </div>
-                
-                <!-- Profile Picture Section -->
-                <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; padding: 2rem; background: #0f1419; border-radius: 12px;">
-                    <div style="position: relative;">
-                        <div id="profileAvatar" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #fff; overflow: hidden;">
+        <div class="dashboard">
+            <h1 class="greeting">Account Settings</h1>
+            
+            <div class="dashboard-grid">
+                <!-- Profile Picture Card -->
+                <div class="card" style="grid-column: span 1;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-user-circle"></i> Profile Picture
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 2rem 0;">
+                        <div id="profileAvatar" style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #fff; overflow: hidden; margin: 0 auto; position: relative; border: 4px solid #2a2a2a;">
                             <i class="fas fa-user"></i>
                         </div>
-                        <label for="profilePicture" style="position: absolute; bottom: 0; right: 0; width: 40px; height: 40px; background: #a855f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 3px solid #1a1f2e;">
-                            <i class="fas fa-camera" style="color: #fff; font-size: 1rem;"></i>
+                        <label for="profilePicture" style="display: inline-block; margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fas fa-camera"></i> Upload Photo
                         </label>
                         <input type="file" id="profilePicture" accept="image/*" style="display: none;">
-                    </div>
-                    <div>
-                        <h3 style="margin-bottom: 0.5rem;">Profile Picture</h3>
-                        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">Upload a profile picture (JPG, PNG, max 5MB)</p>
-                        <button id="removePhoto" style="padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">
+                        <button id="removePhoto" style="display: block; width: 100%; margin-top: 1rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; border-radius: 10px; cursor: pointer;">
                             <i class="fas fa-trash"></i> Remove Photo
                         </button>
                     </div>
                 </div>
 
-                <!-- Account Settings -->
-                <div style="display: grid; gap: 1.5rem;">
-                    <div>
-                        <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Username</label>
-                        <input type="text" id="settingsUsername" style="width: 100%; padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
-                    </div>
-                    <div>
-                        <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Email</label>
-                        <input type="email" id="settingsEmail" style="width: 100%; padding: 0.75rem; background: #0f1419; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;" placeholder="your@email.com">
-                    </div>
-                    <div>
-                        <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Notifications</label>
-                        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #0f1419; border-radius: 8px;">
-                            <input type="checkbox" id="emailNotif" checked style="width: 20px; height: 20px; cursor: pointer;">
-                            <label for="emailNotif" style="color: #fff; cursor: pointer; margin: 0;">Email notifications</label>
+                <!-- Account Settings Card -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-cog"></i> Account Information
                         </div>
                     </div>
-                    <button id="saveSettings" style="padding: 0.875rem; background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
-                        Save Changes
-                    </button>
+                    
+                    <div style="display: grid; gap: 1.5rem; margin-top: 1.5rem;">
+                        <div>
+                            <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Username</label>
+                            <input type="text" id="settingsUsername" style="width: 100%; padding: 0.875rem; background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 10px; color: #fff;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Email</label>
+                            <input type="email" id="settingsEmail" style="width: 100%; padding: 0.875rem; background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 10px; color: #fff;" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label style="display: block; color: #9ca3af; font-size: 0.875rem; margin-bottom: 0.5rem;">Notifications</label>
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #1a1a1a; border-radius: 10px;">
+                                <input type="checkbox" id="emailNotif" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: #ff6b35;">
+                                <label for="emailNotif" style="color: #fff; cursor: pointer; margin: 0;">Enable email notifications</label>
+                            </div>
+                        </div>
+                        <button id="saveSettings" style="padding: 1rem; background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%); border: none; border-radius: 10px; color: #fff; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer style="background: #0f0f0f; padding: 2rem; text-align: center; border-top: 1px solid #2a2a2a; margin-left: 70px;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem; text-align: left;">
+                <div>
+                    <h4 style="color: #ff6b35; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-heartbeat"></i> FitnessGuard
+                    </h4>
+                    <p style="color: #9ca3af; font-size: 0.875rem;">Track your fitness journey with AI-powered insights and analytics.</p>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">Quick Links</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="overview.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Dashboard</a>
+                        <a href="workouts.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Workouts</a>
+                        <a href="analytics.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Analytics</a>
+                        <a href="goals.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Goals</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">Account</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="settings.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Settings</a>
+                        <a href="history.html" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">History</a>
+                        <a href="#" onclick="logout()" style="color: #9ca3af; text-decoration: none; font-size: 0.875rem; transition: color 0.3s;">Logout</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #fff; margin-bottom: 1rem; font-size: 0.875rem;">Connect</h4>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: #9ca3af; font-size: 1.25rem; transition: color 0.3s;"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div style="padding-top: 2rem; border-top: 1px solid #2a2a2a; color: #6b7280; font-size: 0.875rem;">
+                <p>&copy; 2024 FitnessGuard. All rights reserved. Made with <i class="fas fa-heart" style="color: #ff6b35;"></i> for fitness enthusiasts.</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="settings.js"></script>
 </body>

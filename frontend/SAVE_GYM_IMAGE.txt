@@ -1,0 +1,12 @@
+INSTRUCTIONS TO ADD GYM BACKGROUND:
+
+1. Save the gym image you provided in the chat as "gym-background.jpg" in the frontend folder
+2. The CSS has already been updated to use this image as the background
+3. The image will be displayed with a dark overlay to maintain text readability
+
+The auth.css file has been updated to include:
+- The gym image as the main background
+- A dark overlay (rgba(0, 0, 0, 0.7)) to ensure text remains readable
+- The existing neon effects on top of the gym background
+
+Once you save the image, the login page will display the gym background with the futuristic login form overlay.
